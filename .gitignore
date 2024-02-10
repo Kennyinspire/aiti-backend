@@ -3,5 +3,5 @@ node_modules/
 
 
 
-# Ignore environment-specific files
+# dotenv
 .env
