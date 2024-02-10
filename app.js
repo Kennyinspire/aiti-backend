@@ -1,3 +1,21 @@
+// Sample request to create a new expense resource
+// POST /expenses
+// {
+//     "description": "Groceries",
+//     "amount": 100,
+//     "date": "2021-07-01",
+//     "category": "Food"
+// }
+
+// Sample response for the request to create a new expense resource
+// {
+//     "id": "f9b5f6d6-3d3d-4b1e-9e3e-4d5f1e3d3d3d",
+//     "description": "Groceries",
+//     "amount": 100,
+//     "date": "2021-07-01T00:00:00.000Z",
+//     "category": "Food",
+//     "__v": 0
+// }
 const express = require('express'); 
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
@@ -9,12 +27,14 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 // Connect to the MongoDB database
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => {
+if (process.env.NODE_ENV !== 'test') {
+    mongoose.connect(process.env.MONGODB_URI)
+      .then(() => console.log('Connected to MongoDB'))
+      .catch(err => {
         console.error('Could not connect to MongoDB:', err);
-        process.exit(1); // Exit the application on database connection error
-    });
+        process.exit(1);
+      });
+  }
 
 // Define a schema for the expense resource
 const expenseSchema = new mongoose.Schema({
@@ -110,26 +130,10 @@ app.delete('/expenses/:id', async (req, res) => {
 });
 
 // connect to server
-app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(port, () => {
+      console.log(`Server listening at http://localhost:${port}`);
+    });
+  }
 
-// Sample request to create a new expense resource
-// POST /expenses
-// {
-//     "description": "Groceries",
-//     "amount": 100,
-//     "date": "2021-07-01",
-//     "category": "Food"
-// }
-
-// Sample response for the request to create a new expense resource
-// {
-//     "id": "f9b5f6d6-3d3d-4b1e-9e3e-4d5f1e3d3d3d",
-//     "description": "Groceries",
-//     "amount": 100,
-//     "date": "2021-07-01T00:00:00.000Z",
-//     "category": "Food",
-//     "__v": 0
-// }
-
+module.exports = app;
